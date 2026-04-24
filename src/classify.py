@@ -9,7 +9,7 @@ class BoatClassifierProxy:
         # This prioritizes rare defecting votes over vast party loyalty
         self.clf = DecisionTreeClassifier(
             criterion='gini', # Using Gini Index to quantify attribute strength
-            class_weight='balanced', 
+            class_weight='balanced',
             random_state=42,
             max_depth=5 # Prevent overfitting initially
         )
@@ -23,7 +23,7 @@ class BoatClassifierProxy:
     def predict_outcome(self, X_test):
         """Predicts whether the representative will cosponsor."""
         return self.clf.predict(X_test)
-        
+
     def get_feature_importance(self, feature_names):
         """Returns the strength of attributes (e.g., bill content, party)."""
         return dict(zip(feature_names, self.clf.feature_importances_))
