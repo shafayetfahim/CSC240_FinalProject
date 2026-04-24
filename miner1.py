@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 import time
 import config
+from tqdm import tqdm  # Import tqdm for the progress bar
 
 # Configuration
 HEADERS = {"x-api-key": config.API_KEY, "Content-Type": "application/json"}
@@ -45,12 +46,16 @@ def run_extraction():
     
     data_rows = []
     
-    # 3. Iterate through bills and find roll calls
-    for bill in bills[:2000]:
-        # (Your existing logic here...)
+    # 3. Iterate through bills and find roll calls with a progress bar
+    # We wrap the bills list in tqdm()
+    print("Processing bills...")
+    for bill in tqdm(bills[:2000], desc="Extracting votes"):
+        
+        # (Your extraction logic here)
+        
         time.sleep(1.5) 
         
-    # 4. Export with the new path
+    # 4. Export
     df = pd.DataFrame(data_rows)
     output_path = os.path.join(OUTPUT_DIR, "congressional_voting_data.csv")
     df.to_csv(output_path, index=False)
