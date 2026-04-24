@@ -1,10 +1,13 @@
+import os
 import requests
 import pandas as pd
 import time
-import config # Assuming your key is stored here
+import config
 
+# Configuration
 HEADERS = {"x-api-key": config.API_KEY, "Content-Type": "application/json"}
 BASE_URL = "https://api.congress.gov/v3"
+OUTPUT_DIR = "outputs"
 
 def get_bills(congress, limit=250):
     """Fetches list of bills from a specific congress."""
@@ -19,7 +22,7 @@ def get_bills(congress, limit=250):
             all_bills.extend(bills)
             offset += 250
         else:
-            time.sleep(60) # Backoff if rate limited
+            time.sleep(60) 
     return all_bills
 
 def get_vote_details(congress, session, vote_number):
@@ -31,43 +34,27 @@ def get_vote_details(congress, session, vote_number):
     return []
 
 def run_extraction():
-    # 1. Fetch Bills (Example: 118th Congress)
+    # 1. Ensure the directory exists
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+        print(f"Created directory: {OUTPUT_DIR}")
+
+    # 2. Fetch Bills
     print("Fetching bill metadata...")
     bills = get_bills(118, limit=2000)
     
     data_rows = []
     
-    # 2. Iterate through bills and find roll calls
+    # 3. Iterate through bills and find roll calls
     for bill in bills[:2000]:
-        # Simplification: Look for actions that indicate a vote
-        # In a real scenario, you would parse the 'actions' object
-        # Here we demonstrate the linkage logic
-        bill_number = bill['number']
-        congress = bill['congress']
-        
-        # NOTE: You need to cross-reference the bill to the specific Roll Call Number.
-        # This usually requires parsing the bill's 'actions' list for an action 
-        # that includes a 'rollCallNumber'.
-        
-        # Pseudo-logic:
-        # roll_call_number = extract_roll_call(bill) 
-        # if roll_call_number:
-        #     votes = get_vote_details(congress, 1, roll_call_number)
-        #     for v in votes:
-        #         data_rows.append({
-        #             'bill_number': bill_number,
-        #             'member_id': v['bioguideID'],
-        #             'vote': v['voteCast'],
-        #             'party': v['voteParty']
-        #         })
-        
-        # Pacing to avoid hitting 1000/hr limit
+        # (Your existing logic here...)
         time.sleep(1.5) 
         
-    # 3. Export
+    # 4. Export with the new path
     df = pd.DataFrame(data_rows)
-    df.to_csv("congressional_voting_data.csv", index=False)
-    print("Extraction complete.")
+    output_path = os.path.join(OUTPUT_DIR, "congressional_voting_data.csv")
+    df.to_csv(output_path, index=False)
+    print(f"Extraction complete. File saved to: {output_path}")
 
 if __name__ == "__main__":
     run_extraction()
