@@ -206,12 +206,12 @@ def run_extraction():
 
     # ── CSV 1: Bills ──────────────────────────────────────────────────────────
     print("=" * 60)
-    print("STEP 1 — Fetching bills (118th + 119th Congress, target: 10,000)")
+    print("STEP 1 — Fetching bills (118th + 119th Congress, target: 2,000)")
     print("=" * 60)
 
     all_bills_raw = []
     for congress in TARGET_CONGRESSES:
-        remaining = 10_000 - len(all_bills_raw)
+        remaining = 2_000 - len(all_bills_raw)
         if remaining <= 0:
             break
         print(f"\n  Fetching bills for {congress}th Congress …")
