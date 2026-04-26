@@ -1,6 +1,4 @@
-import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
 import logging
 
 class BoatClassifierProxy:
@@ -14,15 +12,15 @@ class BoatClassifierProxy:
             max_depth=5 # Prevent overfitting initially
         )
 
-    def train_model(self, X_train, y_train):
+    def train_model(self, x_train, y_train):
         """Trains the decision tree on historical partisan data."""
         logging.info("Training classification tree with weighted penalties...")
-        self.clf.fit(X_train, y_train)
+        self.clf.fit(x_train, y_train)
         return self.clf
 
-    def predict_outcome(self, X_test):
+    def predict_outcome(self, x_test):
         """Predicts whether the representative will cosponsor."""
-        return self.clf.predict(X_test)
+        return self.clf.predict(x_test)
 
     def get_feature_importance(self, feature_names):
         """Returns the strength of attributes (e.g., bill content, party)."""

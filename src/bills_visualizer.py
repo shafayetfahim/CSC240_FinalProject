@@ -1,3 +1,6 @@
+"""
+For K-means clustering.
+"""
 import matplotlib.pyplot as plt
 from categorize import BillCategorizer
 from sklearn.decomposition import PCA

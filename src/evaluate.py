@@ -1,10 +1,10 @@
-import pandas as pd
 from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score
 from scipy.stats import binomtest
 import logging
 
 class ChronologicalEvaluator:
-    def split_data(self, df):
+    @staticmethod
+    def split_data(df):
         """
         Partitions data sequentially by vote date: 70% Train, 15% Val, 15% Test.
         Assumes df is already sorted chronologically by date.
@@ -20,7 +20,8 @@ class ChronologicalEvaluator:
         logging.info(f"Chronological Split: Train({len(train)}), Val({len(val)}), Test({len(test)})")
         return train, val, test
 
-    def evaluate_model(self, y_true, y_pred, majority_class_baseline):
+    @staticmethod
+    def evaluate_model(y_true, y_pred, majority_class_baseline):
         """
         Evaluates prioritizing F1 and calculating statistical significance.
         """
@@ -44,9 +45,7 @@ class ChronologicalEvaluator:
         for k, v in metrics.items():
             logging.info(f"{k}: {v:.4f}")
             
-        if p_value < 0.05:
-            logging.info("Result is statistically significant (p < 0.05).")
-        else:
-            logging.warning("Result failed statistical significance threshold.")
+        if p_value < 0.05: logging.info("Result is statistically significant (p < 0.05).")
+        else: logging.warning("Result failed statistical significance threshold.")
             
         return metrics

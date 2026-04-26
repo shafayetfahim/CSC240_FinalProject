@@ -1,7 +1,6 @@
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import DBSCAN
-from sklearn.preprocessing import normalize
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -34,13 +33,14 @@ class BillCategorizer:
             df['Summary'] = df['Summary'].fillna(df['Title'])
 
             logging.info("Extracting features using TF-IDF...")
-            X = self.vectorizer.fit_transform(df['Summary'])
+            x = self.vectorizer.fit_transform(df['Summary'])
 
             # Normalize for better cosine distance behavior
             #X = normalize(X)
 
             logging.info("Clustering bills using DBSCAN...")
-            labels = self.dbscan.fit_predict(X)
+            labels = self.dbscan.fit_predict(x)
+
 
             df['Category_Label'] = labels
 

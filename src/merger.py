@@ -1,7 +1,6 @@
 import pandas as pd
 import logging
 
-
 class IdeologyMerger:
     def __init__(self, data_dir="../data/new_data/"):
         self.data_dir = data_dir
