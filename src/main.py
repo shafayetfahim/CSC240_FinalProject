@@ -119,6 +119,8 @@ def run_sprint_pipeline():
         # Group by Legislator to find the top Tie-Breaker candidates
         tie_breakers = results_df.groupby('icpsr')['Defected'].mean().sort_values(ascending=False)
 
+        results_df.to_csv("../data/new_data/results.csv", index=False)
+
         logging.info("Top Legislator Candidates for 'Tie-Breakers' (Highest Defection Rates):")
         logging.info(tie_breakers.head(10))
 
