@@ -1,0 +1,40 @@
+2026-04-25 20:42:24,864 - INFO - Starting the Tie-Breaker Pipeline...
+2026-04-25 20:42:24,864 - INFO - --- PHASE 2: NLP CATEGORIZATION ---
+2026-04-25 20:42:24,900 - INFO - Extracting features using TF-IDF...
+2026-04-25 20:42:24,944 - INFO - Clustering bills into categories...
+2026-04-25 20:42:25,100 - INFO - Categorization complete. Saved to ../data/new_data/bills_categorized.csv
+2026-04-25 20:42:25,117 - INFO - Extracting features using TF-IDF...
+2026-04-25 20:42:25,155 - INFO - Clustering bills into categories...
+2026-04-25 20:42:25,205 - INFO - Categorization complete. Saved to ../data/new_data/bills_categorized.csv
+2026-04-25 20:42:25,205 - INFO - --- PHASE 2.2: VISUALIZATION ---
+2026-04-25 20:42:29,168 - INFO - --- PHASE 3: APRIORI MINING ---
+2026-04-25 20:42:29,175 - ERROR - Transaction build error: 'UID'
+2026-04-25 20:42:29,175 - INFO - Pipeline executed successfully. Awaiting Phase 4 (BOAT Classification).
+2026-04-25 20:42:29,176 - INFO - --- PHASE 4: BOAT CLASSIFICATION ---
+2026-04-25 20:42:29,197 - INFO - Chronological Split: Train(350), Val(75), Test(75)
+2026-04-25 20:42:29,198 - INFO - Chronological Split: Train(350), Val(75), Test(75)
+2026-04-25 20:42:29,198 - INFO - Chronological Split: Train(350), Val(75), Test(75)
+2026-04-25 20:42:29,198 - INFO - Training classification tree with weighted penalties...
+2026-04-25 20:42:29,205 - INFO - Predicting tie-breaker votes on the test set...
+2026-04-25 20:42:29,217 - INFO - Top Legislator Candidates for 'Tie-Breakers' (Highest Defection Rates):
+2026-04-25 20:42:29,217 - INFO - icpsr
+29741    1.0
+29312    0.8
+20124    0.8
+21953    0.6
+21726    0.6
+20704    0.6
+22333    0.6
+21972    0.6
+21746    0.4
+22162    0.4
+Name: Defected, dtype: float64
+2026-04-25 20:42:29,219 - INFO - --- PHASE 5: EVALUATION METRICS ---
+2026-04-25 20:42:29,232 - INFO - Accuracy: 0.5067
+2026-04-25 20:42:29,232 - INFO - F1-Score: 0.5647
+2026-04-25 20:42:29,232 - INFO - Precision: 0.6316
+2026-04-25 20:42:29,232 - INFO - Recall: 0.5106
+2026-04-25 20:42:29,232 - INFO - P-Value: 0.9688
+2026-04-25 20:42:29,232 - WARNING - Result failed statistical significance threshold.
+2026-04-25 20:42:29,232 - INFO - Attribute Strength (Gini): {'Category_Label': np.float64(0.6904932080244766), 'party_code': np.float64(0.3095067919755234)}
+2026-04-25 20:42:29,232 - INFO - Sprint Pipeline Complete!

@@ -3,9 +3,9 @@ from categorize import BillCategorizer
 from sklearn.decomposition import PCA
 
 class BillClusterVisualizer:
-    def __init__(self, vectorizer, dbscan):
+    def __init__(self, vectorizer, kmeans):
         self.vectorizer = vectorizer
-        self.dbscan = dbscan
+        self.kmeans = kmeans
 
     def visualize(self, df):
         # Step 1: Transform text into TF-IDF features
@@ -16,7 +16,7 @@ class BillClusterVisualizer:
         X_reduced = pca.fit_transform(X.toarray())
 
         # Step 3: Get cluster labels
-        labels = self.dbscan.labels_
+        labels = self.kmeans.labels_
 
         # Step 4: Plot
         plt.figure()
@@ -51,17 +51,17 @@ class BillClusterVisualizer:
         # Add legend entry for noise
         #plt.legend()
 
-        plt.title("DBSCAN Clustering of Bills")  # fix title (was K-Means)
+        plt.title("K-Means Clustering of Bills")  # fix title (was K-Means)
         plt.xlabel("PCA Component 1")
         plt.ylabel("PCA Component 2")
 
         plt.show()
 
 if __name__ == "__main__":
-    categorizer = BillCategorizer(eps=0.7, min_samples=5)
+    categorizer = BillCategorizer(n_clusters=5)
     df = categorizer.categorize_bills(
-        input_csv="../data/bills_data.csv",
-        output_csv="../data/bills_categorized.csv"
+        input_csv="../data/new_data/congressional_votes_cleaned.csv",
+        output_csv="../data/new_data/bills_categorized.csv"
     )
-    viz = BillClusterVisualizer(categorizer.vectorizer, categorizer.dbscan)
+    viz = BillClusterVisualizer(categorizer.vectorizer, categorizer.kmeans)
     viz.visualize(df)

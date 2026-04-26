@@ -23,20 +23,21 @@ def run_sprint_pipeline():
     # #Maxing out the bills in a single request
     # congress_miner.fetch_bills(congress=118, limit=250)
 
-    #Phase 2: NLP Categorization
+    #Phase 2: NLP Categorization (UPDATED FOR NEW FILES!!!!)
     logging.info("--- PHASE 2: NLP CATEGORIZATION ---")
-    categorizer = BillCategorizer(eps=0.7, min_samples=5)
+    categorizer = BillCategorizer(n_clusters=5)
+    categorizer.categorize_bills(input_csv="../data/new_data/congressional_votes_cleaned.csv", output_csv="../data/new_data/bills_categorized.csv")
 
     df = categorizer.categorize_bills(
-        input_csv="../data/bills_data.csv",
-        output_csv="../data/bills_categorized.csv"
+        input_csv="../data/new_data/congressional_votes_cleaned.csv",
+        output_csv="../data/new_data/bills_categorized.csv"
     )
 
     # --- NEW: Visualization Step ---
     logging.info("--- PHASE 2.2: VISUALIZATION ---")
     from bills_visualizer import BillClusterVisualizer
 
-    viz = BillClusterVisualizer(categorizer.vectorizer, categorizer.dbscan)
+    viz = BillClusterVisualizer(categorizer.vectorizer, categorizer.kmeans)
     viz.visualize(df)
 
     #Phase 2.5: Build the Receipts (Turned ON for this run only)
@@ -48,7 +49,7 @@ def run_sprint_pipeline():
     apriori_miner = AprioriMiner(min_support=0.05) 
     
     # 1. Build the one-hot encoded matrix
-    basket = apriori_miner.build_transactions("../data/voting_history.csv")
+    basket = apriori_miner.build_transactions("../data/new_data/voting_history.csv")
     
     if basket is not None:
         # 2. Mine for common voting patterns
@@ -69,11 +70,11 @@ def run_sprint_pipeline():
 
     try:
         # 1. Load the merged data
-        history_df = pd.read_csv("../data/voting_history.csv")
-        reps_df = pd.read_csv("../data/representatives_cleaned.csv")
+        history_df = pd.read_csv("../data/new_data/voting_history.csv")
+        reps_df = pd.read_csv("../data/new_data/member_ideology_cleaned.csv")
 
         # Merge voting history with party affiliation
-        merged_df = pd.merge(history_df, reps_df[['UID', 'party_code']], on='UID', how='inner')
+        merged_df = pd.merge(history_df, reps_df[['icpsr', 'party_code']], on='icpsr', how='inner')
 
         # Encode categorical data for the decision tree
         le = LabelEncoder()
@@ -83,15 +84,15 @@ def run_sprint_pipeline():
         #X = merged_df[['Category_Label', 'party_code']]
        # y = merged_df['Voted_Yes']
 
-        # Keep UID for tracking, but don't train the model on it
+        # Keep icpsr for tracking, but don't train the model on it
         X_features = merged_df[['Category_Label', 'party_code']]
-        X_tracking = merged_df[['UID']]
+        X_tracking = merged_df[['icpsr']]
         y = merged_df['Voted_Yes']
 
         # 2. Apply Chronological Holdout
         evaluator = ChronologicalEvaluator()
         X_train, X_val, X_test = evaluator.split_data(X_features)
-        X_test_tracking = evaluator.split_data(X_tracking)[2]  # Get the UIDs for the test set
+        X_test_tracking = evaluator.split_data(X_tracking)[2]  # Get the icpsrs for the test set
         y_train, y_val, y_test = evaluator.split_data(y)
 
         # 3. Train the BOAT Proxy Model
@@ -116,7 +117,7 @@ def run_sprint_pipeline():
         results_df['Defected'] = results_df['Actual_Vote'] != results_df['Predicted_Vote']
 
         # Group by Legislator to find the top Tie-Breaker candidates
-        tie_breakers = results_df.groupby('UID')['Defected'].mean().sort_values(ascending=False)
+        tie_breakers = results_df.groupby('icpsr')['Defected'].mean().sort_values(ascending=False)
 
         logging.info("Top Legislator Candidates for 'Tie-Breakers' (Highest Defection Rates):")
         logging.info(tie_breakers.head(10))
